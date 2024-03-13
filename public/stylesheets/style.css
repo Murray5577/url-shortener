@@ -1,0 +1,45 @@
+*{
+  box-sizing: border-box;
+}
+
+.container{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+h1{
+  color:rgb(6, 105, 105);
+}
+
+img{
+  width: 250px;
+}
+
+.input-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15pt;
+}
+
+.search-bar{
+
+}
+
+.search-bar input{
+  width: 550px;
+  height: 35px;
+}
+
+.search-bar button{
+  width: 150px;
+  height: 35px;
+  color:rgb(255, 255, 255);
+  background: rgb(23, 144, 144);
+  border: 0;
+}
+
+.short-url{
+  text-align: center;
+}
