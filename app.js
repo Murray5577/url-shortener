@@ -24,7 +24,7 @@ app.get('/shorten',(req,res)=>{
     res.render('short',{shortUrl})
 })
 
-//修改
+//需要從json裡找id
 app.get('/shorturl/:id', (req, res) => {
     const id = req.params.id
     res.send(`read shorturl: ${id}`)
@@ -34,34 +34,40 @@ app.listen(port,()=>{
     console.log(`express server is running on http://localhost:${port}`)
 })
 
-
+//隨機代碼
 function randomNum(){
     const number = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     let word = ''
-    for (let i=0 ; i<5 ; i++) {
-        word += number[Math.floor(Math.random()*62)]
+    
+    for (let i = 0; i < 5; i++) {
+        word += number[Math.floor(Math.random() * 62)]
     }
+    
     return word
 }
 
-let newUrl = {
-    "id": "5d6gh",
-    "original": "www.yahoo.com"
-}
-
+//縮短網址
 function shorten(inputurl){
-    fs.readFile('./url.json', function (err, urlInfo){
+    let id = randomNum()
+    
+    fs.readFile('./url.json', function (err, data){
+        
         if (err) { 
             return console.error(err)
         }
 
-        let id = randomNum()
-        newUrl.push({
-            id: id,
-            original: inputurl
-        })
+        let urls = JSON.parse(data)
 
-        let str = JSON.stringify(newUrl);
+        if (urls.some((url) => url.original===inputurl)){
+            id = urls.find((url) => url.original === inputurl).id
+        }else {
+            urls.push({
+                "id": id,
+                "original": inputurl
+            })
+        }
+        
+        let str = JSON.stringify(urls);
         //將字串符傳入您的 json 文件中
         fs.writeFile('./url.json', str, function (err) {
             if (err) {
@@ -71,5 +77,6 @@ function shorten(inputurl){
         })
     })
     
-    return `http://localhost:3000/${randomNum()}`
+    return `http://localhost:3000/${id}`
+    
 }
