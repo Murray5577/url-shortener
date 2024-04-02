@@ -1,5 +1,14 @@
 <h1 class="short-title">This is shorten url :</h1>
-<h1 class="short-url">{{shortUrl}}</h1>
+<h1 class="short-url" id="generatedURL" value="{{shortUrl}}">{{shortUrl}}</h1>
 <div class="copy-button">
-    <button>Copy</button>
+    <button type="button" onclick="copy()">Copy</button>
 </div>
+
+<script>
+    function copy() {
+        const URL = document.getElementById("generatedURL")
+        navigator.clipboard.writeText(URL.innerText)
+            .then(() => alert('copied'))
+            .catch(error => console.log(error))
+    }
+</script>

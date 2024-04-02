@@ -4,6 +4,7 @@ const app = express()
 const port = 3000
 
 const fs = require('fs')
+const totalUrls = require('./url.json')
 
 app.engine('.hbs', engine({ extname: '.hbs' }))
 app.set('view engine', '.hbs')
@@ -24,10 +25,12 @@ app.get('/shorten',(req,res)=>{
     res.render('short',{shortUrl})
 })
 
-//需要從json裡找id
+//短網址路由
 app.get('/shorturl/:id', (req, res) => {
-    const id = req.params.id
-    res.send(`read shorturl: ${id}`)
+    const id = req.params.id   
+    const originalUrl = totalUrls.find((url) => url.id === id).original
+    res.redirect(originalUrl)
+    
 })
 
 app.listen(port,()=>{
@@ -49,7 +52,28 @@ function randomNum(){
 //縮短網址
 function shorten(inputurl){
     let id = randomNum()
+
+    if (totalUrls.some((url) => url.original === inputurl)) {
+        id = totalUrls.find((url) => url.original === inputurl).id
+
+    } else {
+        totalUrls.push({
+            "id": id,
+            "original": inputurl
+        })
+
+        let str = JSON.stringify(totalUrls);
+        fs.writeFile('./url.json', str, function (err) {
+            if (err) {
+                console.error(err);
+            }
+            console.log('Add new url to urlInfo...')
+        })
+    }
+
+    return `http://localhost:3000/shorturl/${id}`
     
+    /*
     fs.readFile('./url.json', function (err, data){
         
         if (err) { 
@@ -68,7 +92,6 @@ function shorten(inputurl){
         }
         
         let str = JSON.stringify(urls);
-        //將字串符傳入您的 json 文件中
         fs.writeFile('./url.json', str, function (err) {
             if (err) {
                 console.error(err);
@@ -76,7 +99,9 @@ function shorten(inputurl){
             console.log('Add new url to urlInfo...')
         })
     })
-    
     return `http://localhost:3000/${id}`
-    
+
+    ./public/jsons/urls.json
+
+    */
 }
